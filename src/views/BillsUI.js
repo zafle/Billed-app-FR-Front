@@ -26,15 +26,7 @@ const rows = (data) => {
   if (data && data.length) {
 
     // sort by descending date
-    let sortedDatas
-
-    // as jest tests dates datas in a different format than API datas
-    if (data.some(bill => bill.hasOwnProperty('rawdate'))) {
-      sortedDatas = Array.from(data).sort((a, b) => new Date(b.rawdate) - new Date(a.rawdate))
-    } else {
-      sortedDatas = Array.from(data).sort((a, b) => new Date(b.date) - new Date(a.date))
-    }
-
+    const sortedDatas = Array.from(data).sort((a, b) => new Date(b.rawdate) - new Date(a.rawdate))
     return sortedDatas.map(bill => row(bill)).join("")
 
   } else {
