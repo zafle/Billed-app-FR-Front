@@ -15,30 +15,57 @@ export default class NewBill {
     this.billId = null
     new Logout({ document, localStorage, onNavigate })
   }
+  testFile = fileName => {
+    const fileStructure = fileName.split(".")
+    const fileType = fileStructure[1]
+    return fileType.match(/^(jpg|jpeg|png)$/)
+  }
+  displayFileErrorMessage = (fileInput) => {
+    const errorMessage = this.document.createElement("div")
+    errorMessage.classList.add("file-type-error")
+    errorMessage.innerHTML = "Le justificatif doit être au format .jpg, .jpeg ou .png"
+    fileInput.after(errorMessage)
+  }
+  removeFileErrorMessage = () => {
+    const errorMessage = this.document.querySelector(".file-type-error")
+    if (errorMessage) {
+      errorMessage.remove()
+    }
+  }
   handleChangeFile = e => {
     e.preventDefault()
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+    this.removeFileErrorMessage()
+    const fileInput = this.document.querySelector(`input[data-testid="file"]`)
+    const file = fileInput.files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
-    const formData = new FormData()
-    const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
-    formData.append('email', email)
+    //  if file is .jpg, .jpeg or .png
+    if (this.testFile(fileName)) {
+      const formData = new FormData()
+      const email = JSON.parse(localStorage.getItem("user")).email
+      formData.append('file', file)
+      formData.append('email', email)
 
-    this.store
-      .bills()
-      .create({
-        data: formData,
-        headers: {
-          noContentType: true
-        }
-      })
-      .then(({fileUrl, key}) => {
-        console.log(fileUrl)
-        this.billId = key
-        this.fileUrl = fileUrl
-        this.fileName = fileName
-      }).catch(error => console.error(error))
+      this.store
+        .bills()
+        .create({
+          data: formData,
+          headers: {
+            noContentType: true
+          }
+        })
+        .then(({fileUrl, key}) => {
+          console.log(fileUrl)
+          this.billId = key
+          this.fileUrl = fileUrl
+          this.fileName = fileName
+        }).catch(error => console.error(error))
+
+    } else {
+      // if is not jpg, jpeg or png
+      fileInput.value = ""
+      this.displayFileErrorMessage(fileInput)
+    }
   }
   handleSubmit = e => {
     e.preventDefault()
