@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import '@testing-library/jest-dom/extend-expect'
 import {fireEvent, screen, waitFor} from "@testing-library/dom"
 import userEvent from '@testing-library/user-event'
 import DashboardFormUI from "../views/DashboardFormUI.js"
@@ -237,6 +238,30 @@ describe('Given I am connected as Admin and I am on Dashboard page and I clicked
       const modale = screen.getByTestId('modaleFileAdmin')
       expect(modale).toBeTruthy()
     })
+
+    test('The name of the supporting document should appear', () => {
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Admin'
+      }))
+      document.body.innerHTML = DashboardFormUI(bills[0])
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+      const store = null
+      const dashboard = new Dashboard({
+        document, onNavigate, store, bills, localStorage: window.localStorage
+      })
+
+      const handleClickIconEye = jest.fn(dashboard.handleClickIconEye)
+      const eye = screen.getByTestId('icon-eye-d')
+      eye.addEventListener('click', handleClickIconEye)
+      userEvent.click(eye)
+      expect(handleClickIconEye).toHaveBeenCalled()
+
+      const supportName = screen.getByTestId('file-name-admin')
+      expect(supportName).toHaveTextContent(/^[^\s]+\.(jpg|jpeg|png)$/)
+    })
   })
 })
 
@@ -306,4 +331,3 @@ describe("Given I am a user connected as Admin", () => {
 
   })
 })
-
