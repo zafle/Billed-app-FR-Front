@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom'
-import { fireEvent, screen, waitFor } from "@testing-library/dom"
+import { screen, waitFor } from "@testing-library/dom"
 import userEvent from '@testing-library/user-event'
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"

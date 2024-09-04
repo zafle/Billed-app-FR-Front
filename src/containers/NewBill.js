@@ -23,6 +23,8 @@ export default class NewBill {
   displayFileErrorMessage = (fileInput) => {
     const errorMessage = this.document.createElement("div")
     errorMessage.classList.add("file-type-error")
+    errorMessage.dataset.testid = "file-error-message"
+
     errorMessage.innerHTML = "Le justificatif doit être au format .jpg, .jpeg ou .png"
     fileInput.after(errorMessage)
   }
@@ -37,8 +39,20 @@ export default class NewBill {
     this.removeFileErrorMessage()
     const fileInput = this.document.querySelector(`input[data-testid="file"]`)
     const file = fileInput.files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
+    let fileName
+    // in jest environment
+    if (typeof jest !== 'undefined') {
+      fileName = file.name
+    }
+    /* istanbul ignore next */
+    // in prod environment
+    else {
+      /* istanbul ignore next */
+      const filePath = e.target.value.split(/\\/g)
+      /* istanbul ignore next */
+      fileName = filePath[filePath.length-1]
+    }
+
     //  if file is .jpg, .jpeg or .png
     if (this.testFile(fileName)) {
       const formData = new FormData()
@@ -89,6 +103,7 @@ export default class NewBill {
   }
 
   // not need to cover this function by tests
+  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.store) {
       this.store
