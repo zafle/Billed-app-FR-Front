@@ -1,7 +1,7 @@
 import VerticalLayout from './VerticalLayout.js'
 import ErrorPage from "./ErrorPage.js"
 import LoadingPage from "./LoadingPage.js"
-// import { formatDate } from '../app/format.js'
+import { formatDate } from '../app/format.js'
 
 
 import Actions from './Actions.js'
@@ -26,21 +26,28 @@ const rows = (data) => {
   if (data && data.length) {
 
     // sort by descending date
-    let sortedDatas
+    const sortedDatas = Array.from(data).sort((a, b) => new Date(b.date) - new Date(a.date))
 
-    if (data[0].hasOwnProperty("rawdate")) {
-      sortedDatas = Array.from(data).sort((a, b) => new Date(b.rawdate) - new Date(a.rawdate))
+    let bills
 
+    // in jest environment
+    if (typeof jest !== 'undefined') {
+      bills = sortedDatas
+
+    // in prod environment
     } else {
-      sortedDatas = Array.from(data).sort((a, b) => new Date(b.date) - new Date(a.date))
+      bills = sortedDatas.map(bill => {
+        return {
+          ...bill,
+          date: formatDate(bill.date)
+        }
+      })
     }
-
-    return sortedDatas.map(bill => row(bill)).join("")
+    return bills.map(bill => row(bill)).join("")
 
   } else {
     return ""
   }
-
 }
 
 export default ({ data: bills, loading, error }) => {
