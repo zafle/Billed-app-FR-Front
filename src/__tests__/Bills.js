@@ -11,15 +11,23 @@ import Bills from "../containers/Bills.js"
 import { ROUTES, ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
 import mockStore from "../__mocks__/store.js"
-
 import router from "../app/Router.js";
 
-
 describe("Given I am connected as an employee", () => {
+  describe("When I am on Bills page, but page is loading", () => {
+    test("Then, Loading page should be rendered", () => {
+      document.body.innerHTML = BillsUI({ loading: true })
+      expect(screen.getAllByText('Loading...')).toBeTruthy()
+    })
+  })
+  describe("When I am on Bills page, back-end send an error message", () => {
+    test("Then, Then, Error page should be rendered", () => {
+      document.body.innerHTML = BillsUI({ error: 'some error message' })
+      expect(screen.getAllByText('Erreur')).toBeTruthy()
+    })
+  })
   describe("When I am on Bills Page", () => {
-
     test("Then bill icon in vertical layout should be highlighted", async () => {
-
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee'
@@ -31,10 +39,15 @@ describe("Given I am connected as an employee", () => {
       window.onNavigate(ROUTES_PATH.Bills)
       await waitFor(() => screen.getByTestId('icon-window'))
       const windowIcon = screen.getByTestId('icon-window')
-
       //to-do write expect expression
       expect(windowIcon).toHaveClass('active-icon')
-
+    })
+    test("Then all my bills should appear", () => {
+      document.body.innerHTML = BillsUI({ data: bills })
+      expect(screen.getByText("encore")).toBeTruthy()
+      expect(screen.getByText("test1")).toBeTruthy()
+      expect(screen.getByText("test3")).toBeTruthy()
+      expect(screen.getByText("test2")).toBeTruthy()
     })
     test("Then bills should be ordered from earliest to latest", () => {
       document.body.innerHTML = BillsUI({ data: bills })
@@ -43,8 +56,6 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
-
-
     describe("When I click on the eye icon", () => {
       test("Then the file's image should be displayed into modal", () => {
         Object.defineProperty(window, 'localStorage', { value: localStorageMock })
@@ -71,7 +82,7 @@ describe("Given I am connected as an employee", () => {
     })
 
     describe("When I click on 'Nouvelle note de frais'", () => {
-      test("Then the new bill form should display", () => {
+      test("Then I should be redirected to New Bill page and the new bill form should display", () => {
         Object.defineProperty(window, 'localStorage', { value: localStorageMock })
         window.localStorage.setItem('user', JSON.stringify({
           type: 'Employee'
@@ -91,7 +102,6 @@ describe("Given I am connected as an employee", () => {
         userEvent.click(buttonNeWBill)
 
         expect(handleClickNewBill).toHaveBeenCalled()
-
         expect(screen.getByTestId("form-new-bill")).toBeTruthy()
       })
     })
@@ -142,6 +152,7 @@ describe("Given I am a user connected as Employee", () => {
       document.body.appendChild(root)
       router()
     })
+    // La ressource est introuvable
     test("fetches bills from an API and fails with 404 message error", async () => {
 
       mockStore.bills.mockImplementationOnce(() => {
@@ -156,6 +167,7 @@ describe("Given I am a user connected as Employee", () => {
       expect(message).toBeTruthy()
     })
 
+    // la version du protocole HTTP utilisée dans la requête n'est pas prise en charge par le serveur
     test("fetches messages from an API and fails with 500 message error", async () => {
 
       mockStore.bills.mockImplementationOnce(() => {

@@ -151,7 +151,6 @@ describe('Given I am connected as an Admin', () => {
     })
   })
 
-
   describe('When I am on Dashboard and there are no bills', () => {
     test('Then, no cards should be shown', () => {
       document.body.innerHTML = cards([])
@@ -212,7 +211,19 @@ describe('Given I am connected as Admin, and I am on Dashboard page, and I click
     })
   })
 })
-
+describe("Given I am connected as Admin and I am on Dashboard page", ()=> {
+  describe("When I clicked on a bill", () => {
+    test('The name of the supporting document should appear', () => {
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Admin'
+      }))
+      document.body.innerHTML = DashboardFormUI(bills[0])
+      const supportName = screen.getByTestId('file-name-admin')
+      expect(supportName).toHaveTextContent(/^[^\s]+\.(jpg|jpeg|png)$/)
+    })
+  })
+})
 describe('Given I am connected as Admin and I am on Dashboard page and I clicked on a bill', () => {
   describe('When I click on the icon eye', () => {
     test('A modal should open', () => {
@@ -237,30 +248,6 @@ describe('Given I am connected as Admin and I am on Dashboard page and I clicked
 
       const modale = screen.getByTestId('modaleFileAdmin')
       expect(modale).toBeTruthy()
-    })
-
-    test('The name of the supporting document should appear', () => {
-      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
-      window.localStorage.setItem('user', JSON.stringify({
-        type: 'Admin'
-      }))
-      document.body.innerHTML = DashboardFormUI(bills[0])
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname })
-      }
-      const store = null
-      const dashboard = new Dashboard({
-        document, onNavigate, store, bills, localStorage: window.localStorage
-      })
-
-      const handleClickIconEye = jest.fn(dashboard.handleClickIconEye)
-      const eye = screen.getByTestId('icon-eye-d')
-      eye.addEventListener('click', handleClickIconEye)
-      userEvent.click(eye)
-      expect(handleClickIconEye).toHaveBeenCalled()
-
-      const supportName = screen.getByTestId('file-name-admin')
-      expect(supportName).toHaveTextContent(/^[^\s]+\.(jpg|jpeg|png)$/)
     })
   })
 })
