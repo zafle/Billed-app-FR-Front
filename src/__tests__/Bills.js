@@ -60,8 +60,8 @@ describe("Given I am connected as an employee", () => {
 })
 
 describe("Given I am connected as an employee and I am on Bills Page", () => {
-  describe("When I click on the eye icon", () => {
-    test("Then the file's image should be displayed into modal", () => {
+  describe("When I click on an eye icon", () => {
+    test("Then the file's image should be displayed into modal", async () => {
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Employee'
@@ -75,13 +75,18 @@ describe("Given I am connected as an employee and I am on Bills Page", () => {
 
       const billsDashboard = new Bills({document, onNavigate, store: null, localStorage: localStorageMock})
 
-      const handleClickIconEye = jest.fn((e) => billsDashboard.handleClickIconEye(e.target))
+      const handleClickIconEyeSpy = jest.spyOn(billsDashboard, "handleClickIconEye")
       const iconEyes = screen.getAllByTestId('icon-eye')
-      iconEyes[0].addEventListener("click", handleClickIconEye)
-      userEvent.click(iconEyes[0])
 
-      expect(handleClickIconEye).toHaveBeenCalled()
-      expect(screen.getByAltText(`Bill`)).toBeTruthy()
+      for (let icon of iconEyes) {
+        userEvent.click(icon)
+        await waitFor(() => {screen.getByAltText(`Bill`)})
+        const image = screen.getByAltText(`Bill`)
+        expect(image).toHaveAttribute('src', expect.stringMatching(/^https:\/\/.*(?<!null)$/))
+        expect(handleClickIconEyeSpy).toHaveBeenCalledWith(icon)
+      }
+
+      expect(handleClickIconEyeSpy).toHaveBeenCalledTimes(4)
     })
   })
   describe("When I click on 'Nouvelle note de frais'", () => {

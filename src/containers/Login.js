@@ -59,7 +59,8 @@ export default class Login {
   }
 
   // not need to cover this function by tests
-  login = (user) => {
+    /* istanbul ignore next */
+    login = (user) => {
     if (this.store) {
       return this.store
       .login(JSON.stringify({
@@ -74,7 +75,8 @@ export default class Login {
   }
 
   // not need to cover this function by tests
-  createUser = (user) => {
+    /* istanbul ignore next */
+    createUser = (user) => {
     if (this.store) {
       return this.store
       .users()

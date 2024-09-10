@@ -36,6 +36,7 @@ const rows = (data) => {
 
     // in prod environment
     } else {
+    /* istanbul ignore next */
       bills = sortedDatas.map(bill => {
         return {
           ...bill,
