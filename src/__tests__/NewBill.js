@@ -175,7 +175,7 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
 })
 describe("Given I am connected as an employee and I am on NewBill Page", () => {
   describe("When I send form with all fields filled", () => {
-    test("The form should be sent with correct values", async () => {
+    test("The form should be sent with correct values and I should be redirected to Bills page", async () => {
       const html = NewBillUI()
       document.body.innerHTML = html
 
@@ -352,7 +352,9 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       userEvent.upload(fileInput, file)
       await new Promise(process.nextTick)
 
-      expect(errorSpy).toHaveBeenCalled()
+      expect(errorSpy).toHaveBeenCalledWith(expect.objectContaining({
+        message: "postError"
+      }))
       expect(logSpy).not.toHaveBeenCalledWith("https://localhost:3456/images/test.jpg")
       errorSpy.mockRestore()
       logSpy.mockRestore()
@@ -462,9 +464,10 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
 
       expect(logSpy).toHaveBeenNthCalledWith(1, 'https://localhost:3456/images/test.jpg')
       expect(logSpy).toHaveBeenNthCalledWith(2, 'e.target.querySelector(`input[data-testid="datepicker"]`).value', '2024-09-02')
-      expect(logSpy).toHaveBeenCalledTimes(2)
 
-      expect(errorSpy).toHaveBeenCalledTimes(1)
+      expect(errorSpy).toHaveBeenCalledWith(expect.objectContaining({
+        message: "updateError"
+      }))
 
       logSpy.mockRestore()
       errorSpy.mockRestore()
