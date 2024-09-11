@@ -36,49 +36,51 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     e.preventDefault()
-    this.removeFileErrorMessage()
-    const fileInput = this.document.querySelector(`input[data-testid="file"]`)
-    const file = fileInput.files[0]
-    let fileName
-    // in jest environment
-    if (typeof jest !== 'undefined') {
-      fileName = file.name
-    }
-    /* istanbul ignore next */
-    // in prod environment
-    else {
+    if (e.target.value !== "") {
+      this.removeFileErrorMessage()
+      const fileInput = this.document.querySelector(`input[data-testid="file"]`)
+      const file = fileInput.files[0]
+      let fileName
+      // in jest environment
+      if (typeof jest !== 'undefined') {
+        fileName = file.name
+      }
       /* istanbul ignore next */
-      const filePath = e.target.value.split(/\\/g)
-      /* istanbul ignore next */
-      fileName = filePath[filePath.length-1]
-    }
+      // in prod environment
+      else {
+        /* istanbul ignore next */
+        const filePath = e.target.value.split(/\\/g)
+        /* istanbul ignore next */
+        fileName = filePath[filePath.length-1]
+      }
 
-    //  if file is .jpg, .jpeg or .png
-    if (this.testFile(fileName)) {
-      const formData = new FormData()
-      const email = JSON.parse(localStorage.getItem("user")).email
-      formData.append('file', file)
-      formData.append('email', email)
+      //  if file is .jpg, .jpeg or .png
+      if (this.testFile(fileName)) {
+        const formData = new FormData()
+        const email = JSON.parse(localStorage.getItem("user")).email
+        formData.append('file', file)
+        formData.append('email', email)
 
-      this.store
-        .bills()
-        .create({
-          data: formData,
-          headers: {
-            noContentType: true
-          }
-        })
-        .then(({fileUrl, key}) => {
-          console.log(fileUrl)
-          this.billId = key
-          this.fileUrl = fileUrl
-          this.fileName = fileName
-        }).catch(error => console.error(error))
+        this.store
+          .bills()
+          .create({
+            data: formData,
+            headers: {
+              noContentType: true
+            }
+          })
+          .then(({fileUrl, key}) => {
+            console.log(fileUrl)
+            this.billId = key
+            this.fileUrl = fileUrl
+            this.fileName = fileName
+          }).catch(error => console.error(error))
 
-    } else {
-      // if is not jpg, jpeg or png
-      fileInput.value = ""
-      this.displayFileErrorMessage(fileInput)
+      } else {
+        // if is not jpg, jpeg or png
+        fileInput.value = ""
+        this.displayFileErrorMessage(fileInput)
+      }
     }
   }
   handleSubmit = e => {
