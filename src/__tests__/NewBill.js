@@ -16,7 +16,7 @@ jest.mock("../app/store", () => mockStore)
 
 describe("Given I am connected as an employee and I am on NewBill Page", () => {
   describe("When I am on NewBill Page", () => {
-    test("Then mail icon should be highlightened", () => {
+    test("Then mail icon should be highlighted", () => {
       document.body.innerHTML = ""
       localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "e@e" }));
       const root = document.createElement("div")
