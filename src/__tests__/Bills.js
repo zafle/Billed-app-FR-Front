@@ -62,18 +62,8 @@ describe("Given I am connected as an employee", () => {
 describe("Given I am connected as an employee and I am on Bills Page", () => {
   describe("When I click on an eye icon", () => {
     test("Then the file's image should be displayed into modal", async () => {
-      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
-      window.localStorage.setItem('user', JSON.stringify({
-        type: 'Employee'
-      }))
-
       document.body.innerHTML = BillsUI({ data: bills })
-
-      const onNavigate = (pathname) => {
-        document.body.innerHTML = ROUTES({ pathname })
-      }
-
-      const billsDashboard = new Bills({document, onNavigate, store: null, localStorage: localStorageMock})
+      const billsDashboard = new Bills({document, onNavigate: null, store: null, localStorage: null})
 
       const handleClickIconEyeSpy = jest.spyOn(billsDashboard, "handleClickIconEye")
       const iconEyes = screen.getAllByTestId('icon-eye')
