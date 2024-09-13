@@ -197,10 +197,10 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       const newBill = new NewBill({document, onNavigate, store: mockStore, localStorage: localStorageMock})
 
       const formNewBill = screen.getByTestId("form-new-bill")
+
       const handleSubmit = jest.fn((e) => newBill.handleSubmit(e))
       formNewBill.addEventListener("submit", handleSubmit)
 
-      const handleSubmitSpy = jest.spyOn(newBill, "handleSubmit")
       const updateBillSpy = jest.spyOn(newBill, "updateBill")
       const onNavigateSpy = jest.spyOn(newBill, "onNavigate")
 
@@ -234,7 +234,7 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       fireEvent.submit(formNewBill)
       await new Promise(process.nextTick)
 
-      expect(handleSubmitSpy).toHaveBeenCalledTimes(1)
+      expect(handleSubmit).toHaveBeenCalledTimes(1)
       expect(updateBillSpy).toHaveBeenCalledWith(sentBill)
       expect(onNavigateSpy).toHaveBeenCalledWith(ROUTES_PATH['Bills'])
     })
@@ -265,7 +265,6 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       const handleSubmit = jest.fn((e) => newBill.handleSubmit(e))
       formNewBill.addEventListener("submit", handleSubmit)
 
-      const handleSubmitSpy = jest.spyOn(newBill, "handleSubmit")
       const updateBillSpy = jest.spyOn(newBill, "updateBill")
       const onNavigateSpy = jest.spyOn(newBill, "onNavigate")
 
@@ -299,7 +298,7 @@ describe("Given I am connected as an employee and I am on NewBill Page", () => {
       fireEvent.submit(formNewBill)
       await new Promise(process.nextTick)
 
-      expect(handleSubmitSpy).toHaveBeenCalledTimes(1)
+      expect(handleSubmit).toHaveBeenCalledTimes(1)
       expect(updateBillSpy).toHaveBeenCalledWith(sentBill)
       expect(onNavigateSpy).toHaveBeenCalledWith(ROUTES_PATH['Bills'])
     })
