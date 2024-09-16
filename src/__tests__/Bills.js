@@ -21,7 +21,7 @@ describe("Given I am connected as an employee", () => {
     })
   })
   describe("When I am on Bills page, back-end send an error message", () => {
-    test("Then, Then, Error page should be rendered", () => {
+    test("Then Error page should be rendered", () => {
       document.body.innerHTML = BillsUI({ error: 'some error message' })
       expect(screen.getAllByText('Erreur')).toBeTruthy()
     })
